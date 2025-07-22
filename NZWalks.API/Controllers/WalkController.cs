@@ -47,5 +47,18 @@ namespace NZWalks.API.Controllers
             }
             return Ok(mapper.Map<WalkDto>(walkDomainModel));
         }
+
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDto updateWalkRequestDto)
+        {
+            var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDto);
+            var updatedWalk = await walkRepository.UpdateAsync(id, walkDomainModel);
+            if (updatedWalk == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<WalkDto>(updatedWalk));
+        }
     }
 }
