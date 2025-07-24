@@ -27,7 +27,7 @@ namespace NZWalks.API.Controllers
             };
 
             var identityResult = await userManager.CreateAsync(identityUser, registerRequestDto.Password);
-            
+
             if (identityResult.Succeeded)
             {
                 if (registerRequestDto.Roles != null && registerRequestDto.Roles.Any())
@@ -42,6 +42,25 @@ namespace NZWalks.API.Controllers
             }
 
             return BadRequest(new { Message = "User registration failed", Errors = identityResult.Errors.Select(e => e.Description) });
+        }
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
+        {
+            var user = await userManager.FindByEmailAsync(loginRequestDto.Username);
+
+            if (user != null)
+            {
+                var passwordCheck = await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
+
+                if (passwordCheck)
+                {
+                    return Ok(new { Message = "Login successful" });
+                }
+            }
+
+            return BadRequest(new { Message = "Invalid username or password" });
         }
     }
 }
