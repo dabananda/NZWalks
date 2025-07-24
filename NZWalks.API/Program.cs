@@ -17,6 +17,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<NZWalksDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalksConnection")));
 
+builder.Services.AddDbContext<NZWalksAuthDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalksAuthConnection")));
+
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();
 
