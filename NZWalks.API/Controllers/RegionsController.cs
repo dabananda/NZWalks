@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NZWalks.API.Models.Domain;
 using NZWalks.API.Models.DTO;
 using NZWalks.API.Repositories;
 
@@ -22,10 +23,62 @@ namespace NZWalks.API.Controllers
         public async Task<IActionResult> GetAllRegions()
         {
             var regions = await _regionRepository.GetRegionsAsync();
-           
+
             var regionsDto = _mapper.Map<List<RegionDto>>(regions);
 
             return Ok(regionsDto);
+        }
+
+        [HttpGet]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> GetRegion(Guid id)
+        {
+            var region = await _regionRepository.GetRegionAsync(id);
+
+            if (region == null)
+            {
+                return NotFound();
+            }
+
+            var regionDto = _mapper.Map<RegionDto>(region);
+
+            return Ok(regionDto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddRegion(AddRegionRequest addRegionRequest)
+        {
+            var regionDomain = _mapper.Map<Region>(addRegionRequest);
+            var region = await _regionRepository.AddRegionAsync(regionDomain);
+            var regionDtoResult = _mapper.Map<RegionDto>(region);
+            return CreatedAtAction(nameof(GetRegion), new { id = regionDtoResult.Id }, regionDtoResult);
+        }
+
+        [HttpPut]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> UpdateRegion([FromRoute] Guid id, [FromBody] UpdateRegionRequest updateRegionRequest)
+        {
+            var regionDomain = _mapper.Map<Region>(updateRegionRequest);
+            var region = await _regionRepository.UpdateRegionAsync(id, regionDomain);
+            if (region == null)
+            {
+                return NotFound();
+            }
+            var regionDto = _mapper.Map<RegionDto>(region);
+            return Ok(regionDto);
+        }
+
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> DeleteRegion([FromRoute] Guid id)
+        {
+            var region = await _regionRepository.DeleteRegionAsync(id);
+            if (region == null)
+            {
+                return NotFound();
+            }
+            var regionDto = _mapper.Map<RegionDto>(region);
+            return Ok(regionDto);
         }
     }
 }
