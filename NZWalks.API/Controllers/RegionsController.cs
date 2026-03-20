@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using NZWalks.API.Data;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using NZWalks.API.Models.Domain;
+using NZWalks.API.Models.DTO;
 using NZWalks.API.Repositories;
 
 namespace NZWalks.API.Controllers
@@ -10,10 +11,12 @@ namespace NZWalks.API.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly IRegionRepository _regionRepository;
+        private readonly IMapper _mapper;
 
-        public RegionsController(IRegionRepository regionRepository)
+        public RegionsController(IRegionRepository regionRepository, IMapper mapper)
         {
             _regionRepository = regionRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -21,19 +24,7 @@ namespace NZWalks.API.Controllers
         {
             var regions = _regionRepository.GetRegions();
            
-            var regionsDto = new List<Region>();
-            regions.ToList().ForEach(region =>
-            {
-                var regionDto = new Region()
-                {
-                    Id = region.Id,
-                    Code = region.Code,
-                    Name = region.Name,
-                    RegionImageUrl = region.RegionImageUrl
-                };
-
-                regionsDto.Add(regionDto);
-            });
+            var regionsDto = _mapper.Map<List<RegionDto>>(regions);
 
             return Ok(regionsDto);
         }
