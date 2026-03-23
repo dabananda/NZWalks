@@ -37,9 +37,19 @@ namespace NZWalks.API.Repositories
             return await nZWalksDbContext.Walks.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<Walk>> GetWalks()
+        public async Task<IEnumerable<Walk>> GetWalks(string? filterOn = null, string? filterQuery = null)
         {
-            return await nZWalksDbContext.Walks.ToListAsync();
+            var walks = nZWalksDbContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
+
+            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                if (filterOn.Equals("name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = walks.Where(x => x.Name.Contains(filterQuery));
+                }
+            }
+
+            return await walks.ToListAsync();
         }
 
         public async Task<Walk> UpdateWalk(Guid id, Walk walk)

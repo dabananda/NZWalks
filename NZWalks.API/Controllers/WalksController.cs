@@ -22,9 +22,9 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetWalks()
+        public async Task<IActionResult> GetWalks([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
         {
-            var walksDomain = await walkRepository.GetWalks();
+            var walksDomain = await walkRepository.GetWalks(filterOn, filterQuery);
             var walksDto = mapper.Map<IEnumerable<WalkDto>>(walksDomain);
             return Ok(walksDto);
         }
