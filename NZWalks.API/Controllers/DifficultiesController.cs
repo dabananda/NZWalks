@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NZWalks.API.CustomActionFilters;
 using NZWalks.API.Models.Domain;
 using NZWalks.API.Models.DTO.DifficultyDtos;
 using NZWalks.API.Repositories;
@@ -35,6 +36,7 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> AddDifficulty(CreateDifficultyRequest createDifficultyRequest)
         {
             var difficulty = new Difficulty
@@ -47,6 +49,7 @@ namespace NZWalks.API.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
+        [ValidateModel]
         public async Task<IActionResult> UpdateDifficulty(Guid id, UpdateDifficultyRequest updateDifficultyRequest)
         {
             var difficulty = new Difficulty
